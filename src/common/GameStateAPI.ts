@@ -2,7 +2,7 @@ export interface GameStateAPIInterface {
   board: number[][];
   n: number;
   players: string[];
-  game: string | null;
+  game: string;
   winner: number;
   currentPlayer: number;
   moveNo: number;
@@ -18,7 +18,7 @@ export const gameStateAPIObject = {
   board: [] as number[][], // array of indices, each index corr to the index of this.player
   n: 3, // number of grids
   players: [], // array of player ids
-  game: null, // game id
+  game: "", // game id
   winner: -1, // index of the player
   currentPlayer: 0,
   moveNo: 1,

@@ -1,5 +1,6 @@
 import React from "react";
 import { GameStateContext } from "../../common/context/gameState.context";
+import { ServerInteractionAPI } from "../../common/ServerInteractionAPI";
 
 export interface InputBoardProps {
   x: number;
@@ -21,7 +22,7 @@ function InputBoard({ x, y }: InputBoardProps) {
       break;
   }
 
-  const handlePlay = (playerIdx: number, x: number, y: number) => {
+  const handlePlay = async (playerIdx: number, x: number, y: number) => {
     try {
       if (x < 0 || x >= gameState.n || y < 0 || y >= gameState.n)
         throw RangeError("x, y out of range");
@@ -30,12 +31,24 @@ function InputBoard({ x, y }: InputBoardProps) {
       if (gameState.board[x][y] !== -1)
         throw Error("Board location already played!");
       let board = gameState.board;
-      let currentPlayer = gameState.currentPlayer;
+      const currentPlayerIdx = gameState.currentPlayer;
       let moveNo = gameState.moveNo;
       board[x][y] = playerIdx;
-      currentPlayer = (playerIdx + 1) % gameState.players.length;
+      await ServerInteractionAPI.play(
+        gameState.game,
+        gameState.players[currentPlayerIdx],
+        moveNo,
+        x,
+        y
+      );
+      const newCurrentPlayerIdx = (playerIdx + 1) % gameState.players.length;
       moveNo++;
-      setGameState({ ...gameState, board, currentPlayer, moveNo });
+      setGameState({
+        ...gameState,
+        board,
+        currentPlayer: newCurrentPlayerIdx,
+        moveNo,
+      });
     } catch (e) {
       alert(e);
     }

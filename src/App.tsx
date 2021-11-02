@@ -7,7 +7,12 @@ import {
 import { GameStateContext } from "./common/context/gameState.context";
 import Board from "./components/Board/Board";
 import GameStateDisplay from "./components/Board/GameStateDisplay";
-import { useFormik } from "formik";
+import CreateGameForm from "./components/Board/CreateGameForm";
+import DownloadDataForm from "./components/Utility/DownloadDataForm";
+import {
+  DownloadLinksContext,
+  Links,
+} from "./common/context/downloads.context";
 
 export interface GameMetaInterface {
   gameId: string;
@@ -18,60 +23,26 @@ export interface GameMetaInterface {
 function App() {
   const [gameState, setGameState] =
     React.useState<GameStateAPIInterface>(gameStateAPIObject);
-
-  const formik = useFormik({
-    initialValues: {
-      gameId: "",
-      p0: "",
-      p1: "",
-    },
-    onSubmit: (values) => {
-      setGameState({
-        ...gameState,
-        game: values.gameId,
-        players: [values.p0, values.p1],
-        board: gameState.generateBlankBoard(),
-      });
-    },
+  const [links, setLinks] = React.useState<Links>({
+    games: "",
+    moves: "",
   });
 
   return (
-    <GameStateContext.Provider value={{ gameState, setGameState }}>
-      <div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            formik.handleSubmit();
-          }}
-        >
-          <input
-            id="gameId"
-            placeholder="game id"
-            name="gameId"
-            onChange={formik.handleChange}
-          />
-          <input
-            id="p0"
-            placeholder="player 0"
-            name="p0"
-            onChange={formik.handleChange}
-          />
-          <input
-            id="p1"
-            placeholder="player 1"
-            name="p1"
-            onChange={formik.handleChange}
-          />
-          <input type="submit" />
-        </form>
-        {gameState.game && (
-          <div>
-            <GameStateDisplay />
-            <Board />
-          </div>
-        )}
-      </div>
-    </GameStateContext.Provider>
+    <DownloadLinksContext.Provider value={{ links, setLinks }}>
+      <GameStateContext.Provider value={{ gameState, setGameState }}>
+        <DownloadDataForm />
+        <CreateGameForm />
+        <div>
+          {gameState.game && (
+            <div>
+              <GameStateDisplay />
+              <Board />
+            </div>
+          )}
+        </div>
+      </GameStateContext.Provider>
+    </DownloadLinksContext.Provider>
   );
 }
 

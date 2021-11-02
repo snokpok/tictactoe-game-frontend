@@ -1,8 +1,20 @@
 import axios from "axios";
 
-const serverURL = "http://localhost:4000";
+export const serverURL = "http://localhost:4000";
+export type Tables = "games" | "moves";
 
 export class ServerInteractionAPI {
+  public static async createGame(players: string[]) {
+    const res = await axios({
+      method: "POST",
+      url: `${serverURL}/game`,
+      data: {
+        players,
+      },
+    });
+    return res.data;
+  }
+
   public static async play(
     game: string,
     player: string,
@@ -12,9 +24,9 @@ export class ServerInteractionAPI {
   ) {
     const res = await axios({
       method: "POST",
-      url: `${serverURL}/game/${game}`,
+      url: `${serverURL}/game/${game}/move`,
       data: {
-        move,
+        move_no: move,
         player,
         x,
         y,
@@ -23,11 +35,36 @@ export class ServerInteractionAPI {
     return res.data;
   }
 
-  public static async downloadData() {
+  public static async updateWinner(game: string, winner: string) {
     const res = await axios({
-      method: "GET",
-      url: `${serverURL}/data`,
+      method: "PUT",
+      url: `${serverURL}/game/${game}`,
+      data: {
+        winner,
+      },
     });
     return res.data;
+  }
+
+  public static async backupDataToCSV(
+    tablename: string,
+    format: string = "csv"
+  ) {
+    const res = await axios({
+      method: "POST",
+      url: `${serverURL}/resource/${tablename}/backup?format=${format}`,
+    });
+    return res.data;
+  }
+
+  public static async getDownloadDataLink(tablename: Tables): Promise<string> {
+    const res = await axios({
+      method: "GET",
+      url: `${serverURL}/resource/${tablename}`,
+      responseType: "blob",
+    });
+    const datablob = new Blob([res.data]);
+    const url = window.URL.createObjectURL(datablob);
+    return url;
   }
 }
