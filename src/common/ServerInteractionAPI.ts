@@ -1,6 +1,13 @@
 import axios from "axios";
 
-export const serverURL = "http://localhost:4000";
+export type Environment = "dev" | "prod";
+export const env: Environment = "prod";
+export const backendURLs = {
+  production: "http://54.177.135.47:4000",
+  development: "http://localhost:4000",
+  test: "http://localhost:4000",
+};
+export const serverURL = backendURLs[process.env.NODE_ENV];
 export type Tables = "games" | "moves";
 
 export class ServerInteractionAPI {
@@ -60,7 +67,7 @@ export class ServerInteractionAPI {
   public static async getDownloadDataLink(tablename: Tables): Promise<string> {
     const res = await axios({
       method: "GET",
-      url: `${serverURL}/resource/${tablename}`,
+      url: `${serverURL}/resource/${tablename}?t=${new Date().getTime()}`,
       responseType: "blob",
     });
     const datablob = new Blob([res.data]);
