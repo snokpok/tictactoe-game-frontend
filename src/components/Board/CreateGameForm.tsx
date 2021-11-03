@@ -53,8 +53,12 @@ function CreateGameForm() {
         name="p1"
         onChange={formik.handleChange}
       />
-      {formik.errors.p0 && <div>{formik.errors.p0}</div>}
-      {formik.errors.p1 && <div>{formik.errors.p1}</div>}
+      {formik.errors.p0 && (
+        <div style={{ color: "red" }}>{formik.errors.p0}</div>
+      )}
+      {formik.errors.p1 && (
+        <div style={{ color: "red" }}>{formik.errors.p1}</div>
+      )}
       <input type="submit" />
     </form>
   );
