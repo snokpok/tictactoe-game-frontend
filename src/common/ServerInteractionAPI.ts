@@ -3,7 +3,7 @@ import axios from "axios";
 export type Environment = "dev" | "prod";
 export const env: Environment = "prod";
 export const backendURLs = {
-  production: "http://54.177.135.47:4000",
+  production: "http://50.18.171.58:4000",
   development: "http://localhost:4000",
   test: "http://localhost:4000",
 };
