@@ -14,9 +14,19 @@ function DownloadDataForm() {
     });
   }, [setLinks]);
 
+  const refreshDownloadLinks = React.useCallback(() => {
+    ServerInteractionAPI.backupDataToCSV("games").then((res) => {
+      if (res) alert("backed up games");
+    });
+    ServerInteractionAPI.backupDataToCSV("moves").then((res) => {
+      if (res) alert("backed up moves");
+    });
+  }, []);
+
   React.useEffect(() => {
+    refreshDownloadLinks();
     getNewDownloadLinks();
-  }, [getNewDownloadLinks]);
+  }, [getNewDownloadLinks, refreshDownloadLinks]);
 
   const handleGetTime = () => {
     return new Date().getTime();
@@ -24,6 +34,7 @@ function DownloadDataForm() {
 
   return (
     <div>
+      <button onClick={refreshDownloadLinks}>Backup data</button>
       <a download={`games+${handleGetTime()}.txt`} href={links.games}>
         <button>Download games.csv</button>
       </a>
